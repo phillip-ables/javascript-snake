@@ -1,23 +1,21 @@
 ﻿<canvas id="gc" width="400" height="400"></canvas>
 <script>
     window.onload = function () {
-        //most robost and ugly when we have to do interaction between js and html
         canv = document.getElementById("gc");
-        ctx = canv.getContext("2d"); //graphic context or buffer
-        document.addEventListener("keydown", keyPush);//keyboard hooks, key down is all we need since this game has momentume
-        setInterval(game, 1000 / 15); //interval timer, low fram rates because snake works on low frame rate
-
+        ctx = canv.getContext("2d");
+        document.addEventListener("keydown", keyPush);
+        setInterval(game, 1000 / 15);
     }
-    px = py = 10;  // player position
-    gs = tc = 20;  // grid size and tile size
-    ax = ay = 15;  // apple position
-    xv = yv = 0; // x velocity y velocity uses momentom to move
-    trail = [];  // we need a trial. we need an array. snake game keeps track of all previous position
+    px = py = 10;
+    gs = tc = 20;
+    ax = ay = 15;
+    xv = yv = 0;
+    trail = [];
     tail = 5;
     function game() {
-        px += xv; 
+        px += xv;
         py += yv;
-        if (px < 0) {  // implement some wrap for those, some games wrap some dont
+        if (px < 0) {
             px = tc - 1;
         }
         if (px > tc - 1) {
@@ -31,20 +29,29 @@
         }
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, canv.width, canv.height);
-        //really fast garbage, cerny method -> rapid coding to prove concepts and throw away code bases, how quickly can i get this game testable
+
         ctx.fillStyle = "lime";
         for (var i = 0; i < trail.length; i++) {
             ctx.fillRect(trail[i].x * gs, trail[i].y * gs, gs - 2, gs - 2);
             if (trail[i].x == px && trail[i].y == py) {
-                tail = 5
+                tail = 5;
             }
         }
+        trail.push({ x: px, y: py });
+        while (trail.length > tail) {
+            trail.shift();
+        }
 
+        if (ax == px && ay == py) {
+            tail++;
+            ax = Math.floor(Math.random() * tc);
+            ay = Math.floor(Math.random() * tc);
+        }
         ctx.fillStyle = "red";
-        ctx.fillRect(ax.gs, ax.gs, gs-2, gs-2);
+        ctx.fillRect(ax * gs, ay * gs, gs - 2, gs - 2);
     }
     function keyPush(evt) {
-        switch (evt.key) { // key codes are a great fit for switch, its kinda a natural object
+        switch (evt.keyCode) {
             case 37:
                 xv = -1; yv = 0;
                 break;
